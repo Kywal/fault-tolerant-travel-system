@@ -1,0 +1,40 @@
+services:
+  travel:
+    build: ./travel
+    container_name: travel
+    ports:
+      - "8080:8080"
+    depends_on:
+      - airlines
+      - exchange
+      - fidelity
+    networks:
+      - travel-network
+
+  airlines:
+    build: ./airlines
+    container_name: airlines
+    ports:
+      - "8081:8081"
+    networks:
+      - travel-network
+
+  exchange:
+    build: ./exchange
+    container_name: exchange
+    ports:
+      - "8082:8082"
+    networks:
+      - travel-network
+
+  fidelity:
+    build: ./fidelity
+    container_name: fidelity
+    ports:
+      - "8083:8083"
+    networks:
+      - travel-network
+
+networks:
+  travel-network:
+    driver: bridge
