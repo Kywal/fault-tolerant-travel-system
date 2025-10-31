@@ -18,7 +18,7 @@ public class TravelController {
     
     @PostMapping("/buyTicket")
     public ResponseEntity<String> buyTicket(@RequestBody BuyTicketRequest request) {
-        log.info("[Travel] Recebido pedido de compra: {} - {}", request.getFlight(), request.getDay());
+        log.info("[Travel] Recebido pedido de compra: {} - {}", request.flight(), request.day());
         String result = travelService.processPurchase(request);
         
         return ResponseEntity.ok(result);

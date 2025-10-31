@@ -43,11 +43,11 @@ public class TravelService {
     private FlightData consultFlight(BuyTicketRequest request) {
         log.info("[Travel] Passo 1: Consultando voo...");
 
-        String flightUrl = airlinesURL + "/flight?flight=" + request.getFlight() +
-                          "&day=" + request.getDay();
+        String flightUrl = airlinesURL + "/flight?flight=" + request.flight() +
+                          "&day=" + request.day();
         FlightData flightData = restTemplate.getForObject(flightUrl, FlightData.class);
 
-        log.info("[Travel] Voo encontrado! Valor: ${}", flightData.getValue());
+        log.info("[Travel] Voo encontrado! Valor: ${}", flightData.value());
         return flightData;
     }
 
@@ -59,7 +59,7 @@ public class TravelService {
         );
         log.info("[Travel] Taxa: {}", exchangeRate);
 
-        Double valueInReais = flightData.getValue() * exchangeRate;
+        Double valueInReais = flightData.value() * exchangeRate;
         log.info("[Travel] Valor em R$: {}", valueInReais);
         return valueInReais;
     }
@@ -67,8 +67,8 @@ public class TravelService {
     private String sellFlight(BuyTicketRequest request) {
         log.info("[Travel] Passo 3: Realizando venda...");
         Map<String, String> sellRequest = new HashMap<>();
-        sellRequest.put("flight", request.getFlight());
-        sellRequest.put("day", request.getDay());
+        sellRequest.put("flight", request.flight());
+        sellRequest.put("day", request.day());
 
         Map<String, String> sellResponse = restTemplate.postForObject(
                 airlinesURL + "/sell",
@@ -82,11 +82,8 @@ public class TravelService {
 
     private void registerBonusPoints(BuyTicketRequest request, FlightData flightData) {
         log.info("[Travel] Passo 4: Registrando pontos...");
-        int bonus = (int) Math.round(flightData.getValue());
-
-        BonusRequest bonusRequest = new BonusRequest();
-        bonusRequest.setUser(request.getUser());
-        bonusRequest.setBonus(bonus);
+        int bonus = (int) Math.round(flightData.value());
+        BonusRequest bonusRequest = new BonusRequest(request.user(), bonus);
 
         restTemplate.postForObject(
                 fidelityURL + "/bonus",
