@@ -2,6 +2,7 @@ package br.ufrn.imd.travel.service;
 
 import br.ufrn.imd.travel.dto.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -11,13 +12,18 @@ import java.util.Map;
 @Slf4j
 @Service
 public class TravelService {
-    
+
+    @Value("${airlines.url}")
+    private String airlinesURL;
+
+    @Value("${exchange.url}")
+    private String exchangeURL;
+
+    @Value("${fidelity.url}")
+    private String fidelityURL;
+
     private final RestTemplate restTemplate;
-    
-    private final String AIRLINES_URL = "http://airlines:8081";
-    private final String EXCHANGE_URL = "http://exchange:8082";
-    private final String FIDELITY_URL = "http://fidelity:8083";
-    
+
     public TravelService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
@@ -37,7 +43,7 @@ public class TravelService {
     private FlightData consultFlight(BuyTicketRequest request) {
         log.info("[Travel] Passo 1: Consultando voo...");
 
-        String flightUrl = AIRLINES_URL + "/flight?flight=" + request.getFlight() +
+        String flightUrl = airlinesURL + "/flight?flight=" + request.getFlight() +
                           "&day=" + request.getDay();
         FlightData flightData = restTemplate.getForObject(flightUrl, FlightData.class);
 
@@ -48,7 +54,7 @@ public class TravelService {
     private Double calculateValueInReais(FlightData flightData) {
         log.info("[Travel] Passo 2: Obtendo taxa de câmbio...");
         Double exchangeRate = restTemplate.getForObject(
-                EXCHANGE_URL + "/convert",
+                exchangeURL + "/convert",
                 Double.class
         );
         log.info("[Travel] Taxa: {}", exchangeRate);
@@ -65,7 +71,7 @@ public class TravelService {
         sellRequest.put("day", request.getDay());
 
         Map<String, String> sellResponse = restTemplate.postForObject(
-                AIRLINES_URL + "/sell",
+                airlinesURL + "/sell",
                 sellRequest,
                 Map.class
         );
@@ -83,7 +89,7 @@ public class TravelService {
         bonusRequest.setBonus(bonus);
 
         restTemplate.postForObject(
-                FIDELITY_URL + "/bonus",
+                fidelityURL + "/bonus",
                 bonusRequest,
                 Void.class
         );
