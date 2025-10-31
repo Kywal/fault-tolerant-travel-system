@@ -11,7 +11,6 @@ public class ExchangeController {
 
   @GetMapping("/convert")
     public ResponseEntity<Double> getConversionRate() {
-
         double rate = ThreadLocalRandom.current().nextDouble(5.0, 6.0);
         double roundedRate = Math.round(rate * 100.0) / 100.0;
         return ResponseEntity.ok(roundedRate);
