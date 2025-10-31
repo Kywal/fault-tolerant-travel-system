@@ -2,9 +2,11 @@ package br.ufrn.imd.travel.controller;
 
 import br.ufrn.imd.travel.dto.BuyTicketRequest;
 import br.ufrn.imd.travel.service.TravelService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 public class TravelController {
     
@@ -16,9 +18,7 @@ public class TravelController {
     
     @PostMapping("/buyTicket")
     public ResponseEntity<String> buyTicket(@RequestBody BuyTicketRequest request) {
-        System.out.println("[Travel] Recebido pedido de compra: " + 
-                          request.getFlight() + " - " + request.getDay());
-        
+        log.info("[Travel] Recebido pedido de compra: {} - {}", request.getFlight(), request.getDay());
         String result = travelService.processPurchase(request);
         
         return ResponseEntity.ok(result);
