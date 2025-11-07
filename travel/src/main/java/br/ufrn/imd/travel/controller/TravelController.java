@@ -18,9 +18,17 @@ public class TravelController {
     
     @PostMapping("/buyTicket")
     public ResponseEntity<String> buyTicket(@RequestBody BuyTicketRequest request) {
-        log.info("[Travel] Recebido pedido de compra: {} - {}", request.flight(), request.day());
-        String result = travelService.processPurchase(request);
+        log.info("[Travel] Recebido pedido de compra: {} - {}", 
+                request.flight(), request.day());
         
-        return ResponseEntity.ok(result);
+        try {
+            String result = travelService.processPurchase(request);
+            return ResponseEntity.ok(result);
+            
+        } catch (Exception e) {
+            log.error("[Travel] Erro ao processar compra: {}", e.getMessage());
+            return ResponseEntity.status(500)
+                    .body("Erro ao processar compra: " + e.getMessage());
+        }
     }
 }
