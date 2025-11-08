@@ -45,7 +45,7 @@ public class FaultSimulator {
         switch (config.type()) {
             case OMISSION -> throw new OmissionFaultException(requestName);
             case ERROR -> throw new ErrorFaultException(requestName);
-            case TIME -> simulateDelay(5);
+            case TIME -> simulateDelay(config.durationSeconds());
             case CRASH -> {
                 log.error("[FAULT] CRASH simulado para {}. Encerrando aplicação...", requestName);
                 System.exit(1);
