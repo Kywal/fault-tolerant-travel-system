@@ -3,6 +3,7 @@ package br.ufrn.imd.exchange;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import br.ufrn.imd.exchange.fault.FaultSimulator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebMvcTest(ExchangeController.class)
+@WebMvcTest({ExchangeController.class, FaultSimulator.class})
 class ExchangeControllerTests {
 
     @Autowired

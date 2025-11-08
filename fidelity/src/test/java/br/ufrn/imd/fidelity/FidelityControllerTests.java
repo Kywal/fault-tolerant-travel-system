@@ -3,6 +3,7 @@ package br.ufrn.imd.fidelity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import br.ufrn.imd.fidelity.fault.FaultSimulator;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(FidelityController.class)
+@WebMvcTest({FidelityController.class, FaultSimulator.class})
 class FidelityControllerTests {
 
     @Autowired
