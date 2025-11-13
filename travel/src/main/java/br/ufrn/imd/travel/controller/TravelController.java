@@ -17,12 +17,12 @@ public class TravelController {
     }
     
     @PostMapping("/buyTicket")
-    public ResponseEntity<String> buyTicket(@RequestBody BuyTicketRequest request) {
-        log.info("[Travel] Recebido pedido de compra: {} - {}", 
-                request.flight(), request.day());
+    public ResponseEntity<String> buyTicket(@RequestBody BuyTicketRequest request, @RequestParam(defaultValue = "false") boolean ft) {
+        log.info("[Travel] Recebido pedido de compra: {} - {} (Tolerância a falhas: {})", 
+                request.flight(), request.day(), ft);
         
         try {
-            String result = travelService.processPurchase(request);
+            String result = travelService.processPurchase(request, ft);
             return ResponseEntity.ok(result);
             
         } catch (Exception e) {

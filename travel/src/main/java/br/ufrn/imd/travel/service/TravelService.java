@@ -24,15 +24,18 @@ public class TravelService {
 
     private final RestTemplate restTemplate;
 
-    public TravelService(RestTemplate restTemplate) {
+    private final BonusQueueService bonusQueueService;
+
+    public TravelService(RestTemplate restTemplate, BonusQueueService bonusQueueService) {
         this.restTemplate = restTemplate;
+        this.bonusQueueService = bonusQueueService;
     }
 
-    public String processPurchase(BuyTicketRequest request) {
+    public String processPurchase(BuyTicketRequest request, boolean faultTolerant) {
         FlightData flightData = consultFlight(request);
         Double valueInReais = calculateValueInReais(flightData);
         String transactionId = sellFlight(request);
-        registerBonusPoints(request, flightData);
+        registerBonusPoints(request, flightData, faultTolerant);
 
         log.info("[Travel] Compra finalizada com sucesso!");
 
@@ -82,18 +85,30 @@ public class TravelService {
         return transactionId;
     }
 
-    private void registerBonusPoints(BuyTicketRequest request, FlightData flightData) {
+     private void registerBonusPoints(BuyTicketRequest request, FlightData flightData, boolean faultTolerant) {
         log.info("[Travel] Passo 4: Registrando pontos...");
         
         int bonus = (int) Math.round(flightData.value());
         BonusRequest bonusRequest = new BonusRequest(request.user(), bonus);
 
-        restTemplate.postForObject(
-                fidelityURL + "/bonus",
-                bonusRequest,
-                Void.class
-        );
-        
-        log.info("[Travel] Pontos registrados com sucesso!");
+        try {
+            restTemplate.postForObject(
+                    fidelityURL + "/bonus",
+                    bonusRequest,
+                    Void.class
+            );
+            
+            log.info("[Travel] Pontos registrados com sucesso!");
+            
+        } catch (Exception e) {
+            log.error("[Travel] Falha ao registrar bônus no Fidelity: {}", e.getMessage());
+            
+            if (faultTolerant) {
+                log.info("[Travel] Tolerância a falhas ATIVA - Adicionando bônus à fila");
+                bonusQueueService.addBonusToQueue(bonusRequest);
+            } else {
+                throw new RuntimeException("Falha ao registrar bônus (tolerância a falhas desabilitada)", e);
+            }
+        }
     }
 }

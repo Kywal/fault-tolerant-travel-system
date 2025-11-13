@@ -34,6 +34,7 @@ services:
       - "8083:8083"
     networks:
       - travel-network
+    restart: on-failure # restart automatically when the service exits with failure
 
 networks:
   travel-network:
