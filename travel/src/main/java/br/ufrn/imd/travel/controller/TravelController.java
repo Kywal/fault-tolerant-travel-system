@@ -17,9 +17,10 @@ public class TravelController {
     }
     
     @PostMapping("/buyTicket")
-    public ResponseEntity<String> buyTicket(@RequestBody BuyTicketRequest request, @RequestParam(defaultValue = "false") boolean ft) {
-        log.info("[Travel] Recebido pedido de compra: {} - {} (Tolerância a falhas: {})", 
-                request.flight(), request.day(), ft);
+    public ResponseEntity<String> buyTicket(@RequestBody BuyTicketRequest request,@RequestParam(defaultValue = "false") boolean ft) {
+        
+        log.info("[Travel] Recebido pedido de compra: {} - {} | user={} (Tolerância a falhas: {})", 
+                request.flight(), request.day(), request.user(), ft);
         
         try {
             String result = travelService.processPurchase(request, ft);
