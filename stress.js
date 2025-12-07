@@ -17,7 +17,7 @@ export const options = {
 const availability_rate = new Rate("availability_rate");
 
 export default function () {
-  const url = "http://localhost:8080/buyTicket?ft=true";
+  const url = "http://localhost:8080/buyTicket";
   const payload = JSON.stringify({
     flight: "LA8084",
     day: "2025-11-15",
